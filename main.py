@@ -55,7 +55,7 @@ def get_value():
         print("version value is: ", version_value)
         print("wif value is: ", wif_value)
 
-        # fire_up(version_value, wif_value, scr_trk_wb, scr_trk_sheet)
+        fire_up(version_value, wif_value, scr_trk_wb, scr_trk_sheet)
 
     except ValueError:
         messagebox.showerror("Error", "Value Must Be a Number")
@@ -74,8 +74,6 @@ def get_value():
     # int(version_value)
     # print(version_value)
     # fire_up(version_value)
-    fire_up(version_value, wif_value, scr_trk_wb, scr_trk_sheet)
-
 
 
 # Terinates program when user closes the window
