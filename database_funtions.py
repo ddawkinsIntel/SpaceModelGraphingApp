@@ -52,11 +52,27 @@ def read_bldg_space(conn, id_version):
     return table_building_space
 
 
-# HF - get_building_space: Modifies and returns building table_building_space
-def space_modify_df(table_building_space):
+def get_site(conn):
+    sql = """\
+    EXEC sml.pr_Site_Get
+    """
+    # test = cursor.execute(sql, params)
+    site_df = pd.read_sql(sql, conn)
 
-    # Map SiteID to Site - stored procedure 'sml.pr_Site_Get' no params
-    table_building_space['SiteID'] = table_building_space['SiteID'].map({2506: 'AZ', 2507: 'IR', 2508: 'IS', 2509: 'NM' , 2552: 'LTD', 2557: 'HVM1' })
+    return site_df 
+
+# HF - get_building_space: Modifies and returns building table_building_space
+def space_modify_df(site_id_map, table_building_space):
+    
+    # Merge to add site to table_building_space df
+    table_building_space = table_building_space.merge(site_id_map, how='left', left_on='SiteID', right_on='ID')
+    # Replace SiteID values with Site values - change later, Site should be name used not SiteID,
+    # Didn't change becasuse I didn't want to break anything when intially implementing get_site
+    table_building_space['SiteID'] = table_building_space['Site']
+
+    # Columns to remove from df
+    remove_cols_list = ['Site', 'ID']
+    table_building_space.drop(remove_cols_list, axis=1, inplace=True)
 
     # Transpose df
     table_building_space = table_building_space.T
@@ -80,9 +96,12 @@ def space_modify_df(table_building_space):
 # Gets, formats and returns building space table
 def get_building_space(conn, id_version):
 
+    # Get site to id mapping
+    site_id_map = get_site(conn)
+
     table_building_space = read_bldg_space(conn, id_version)
 
-    table_building_space = space_modify_df(table_building_space)
+    table_building_space = space_modify_df(site_id_map, table_building_space)
 
     return table_building_space
 
