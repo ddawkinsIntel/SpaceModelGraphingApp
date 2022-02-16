@@ -41,7 +41,8 @@ def get_value():
     wif_value = wif_entry.get()
 
     scr_trk_wb = scr_trk_workbook.get()
-    scr_trk_sheet = scr_trk_sheet_entry.get()
+    # scr_trk_sheet = scr_trk_sheet_entry.get()
+    scr_trk_sheet = "Node rollups"
 
     try:
         int(version_value) # checks if version_value is an int
@@ -55,7 +56,7 @@ def get_value():
         print("version value is: ", version_value)
         print("wif value is: ", wif_value)
 
-        fire_up(version_value, wif_value, scr_trk_wb, scr_trk_sheet)
+        # fire_up(version_value, wif_value, scr_trk_wb, scr_trk_sheet)
 
     except ValueError:
         messagebox.showerror("Error", "Value Must Be a Number")
@@ -74,6 +75,7 @@ def get_value():
     # int(version_value)
     # print(version_value)
     # fire_up(version_value)
+    fire_up(version_value, wif_value, scr_trk_wb, scr_trk_sheet)
 
 
 # Terinates program when user closes the window
@@ -122,10 +124,10 @@ scr_trk_workbook_label = tk.Label(root, text="S.Tracker Workbook:").grid(row=3, 
 scr_trk_workbook_op = tk.OptionMenu( root , scr_trk_workbook , *wb_options )
 scr_trk_workbook_op.grid(row=3, column=2, sticky=tk.W, pady=15)
 
-# Creates wif label and entry field 
-scr_trk_sheet_label = tk.Label(root, text="S.Tracker Sheet Name:").grid(row=4, column=1, sticky=tk.W, pady=15)
-scr_trk_sheet_entry = tk.Entry(root, width=30, textvariable=scr_trk_sheet)
-scr_trk_sheet_entry.grid(row=4, column=2, sticky=tk.W, pady=15)
+# # Creates wif label and entry field 
+# scr_trk_sheet_label = tk.Label(root, text="S.Tracker Sheet Name:").grid(row=4, column=1, sticky=tk.W, pady=15)
+# scr_trk_sheet_entry = tk.Entry(root, width=30, textvariable=scr_trk_sheet)
+# scr_trk_sheet_entry.grid(row=4, column=2, sticky=tk.W, pady=15)
 
 # Creates "submit" button and calls get_value function when clicked
 submit_btn = tk.Button(root, text="Submit", width=10, command=get_value).grid(row=5, column=1, columnspan=5, pady=25)
@@ -133,7 +135,7 @@ submit_btn = tk.Button(root, text="Submit", width=10, command=get_value).grid(ro
 # Calls get_value() function when the user hits the "enter" key while in the version_entry or wif_entry field
 version_entry.bind("<Return>", lambda e: get_value())
 wif_entry.bind("<Return>", lambda e: get_value())
-scr_trk_sheet_entry.bind("<Return>", lambda e: get_value())
+# scr_trk_sheet_entry.bind("<Return>", lambda e: get_value())
 
 # Quits program on close
 root.protocol("WM_DELETE_WINDOW", on_closing)
