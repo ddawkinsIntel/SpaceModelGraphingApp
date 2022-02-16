@@ -1,8 +1,11 @@
 
-
 import pandas as pd
 import xlwings as xw
 import create_df_functions as df_func
+import os
+import pathlib
+import database_funtions as db_func
+
 
 # Select what site to iterate through
 site_list = ['AZ', 'IR', 'IS', 'LTD', 'HVM1', 'HVM2', 'HVM3', 'HVM4', 'HVM5', 'NM']
@@ -11,7 +14,7 @@ site_list = ['AZ', 'IR', 'IS', 'LTD', 'HVM1', 'HVM2', 'HVM3', 'HVM4', 'HVM5', 'N
 proc_color_dict = {1222: '#ED7D31', 1270: '#A5A5A5', 1272: '#FFC000', 1274: '#5B9BD5', 1276: 'purple', 1277: '#403152',
                    1278: '#663300', 1280: '#71FFBF', 1282: '#FAC090', 1284:'#B3A2C7', 1286:'#D99694'}
 
-# Chart stuff
+# Add chart series
 def add_area_chart_series(chart, chart_color, sheet, row, ncols, start_row):
     chart.add_series({
         'name': [sheet, row + 1 + start_row, 0],
@@ -125,60 +128,6 @@ def make_chart(df, site_val, pd_writer, start_row=0, chart_cell="G12"):
     worksheet.insert_chart(chart_cell, area_chart)
 
 
-def make_alloc_chart(df, site_val, pd_writer):
-    # Number of columns
-    ncols = df.shape[1]-1
-
-    # Use site value as sheet name
-    sheet_name = site_val
-
-    # write df to excel sheet
-    df.to_excel(pd_writer, sheet_name=sheet_name, index=False)
-
-    # Access the XlsxWriter workbook and worksheet objects from the dataframe.
-    workbook = pd_writer.book
-    worksheet = pd_writer.sheets[sheet_name]
-
-    # # Create a chart object.
-    # line_chart = workbook.add_chart({'type': 'line'})
-    #
-    # # Process Color Dictionary
-    # proc_color_dict = {1222: '#ED7D31', 1270: '#A5A5A5', 1272: '#FFC000', 1274: '#5B9BD5', 1276: 'purple', 1277: '#B3A2C7', 1278: '#663300', 1280: '#71FFBF'}
-    #
-    # line_chart = workbook.add_chart({'type': 'line'})
-    #
-    # # Configure the series of the chart from the dataframe data.
-    # max_row = len(df)
-    # for i in range(max_row):
-    #     row = i
-    #     colname = df.iloc[row, 0]
-    #
-    #     color = 'black'
-    #
-    #     # Line chart series
-    #     line_chart.add_series({
-    #         'name': [sheet_name, row + 1, 1, row + 1, 1],
-    #         'categories': [sheet_name, 0, row + 2, 0, ncols],
-    #         'values': [sheet_name, row + 1, 2, row + 1, ncols],
-    #         'line': {'color': color}
-    #     })
-    #
-    #
-    #
-    # # Place legend at bottom of chart
-    # line_chart.set_legend({'position': 'bottom'})
-    #
-    # # Configure the chart axes.
-    # line_chart.set_x_axis({'name': 'Month'})
-    # line_chart.set_y_axis({'name': 'WSPW', 'major_gridlines': {'visible': False}})
-    #
-    # # Set chart size
-    # line_chart.set_size({'width': 1100, 'height': 500})
-    #
-    # # Insert the chart into the worksheet @ cell G12
-    # worksheet.insert_chart('G12', line_chart)
-
-
 def xw_write(df, file_name, sheet_name, df_cell='A1'):
     # write df to excel sheet
     wb = xw.Book(file_name)
@@ -216,6 +165,32 @@ def make_xw_site_qtrly_graph(site_qtrly, site, file_name):
     site_qtrly_df = df_func.clean_tmgsp_qtrly_df(site_qtrly_df_long)
 
     xw_write(site_qtrly_df, file_name, site, df_cell='A66')
+    wafer_df = site_qtrly_df[site_qtrly_df["CapacityType"].str.contains("WSVolume")]
+    wafer_df["CapacityType"] = wafer_df["CapacityType"].str.replace(" WSVolume", "")
+    wafer_df.rename({'CapacityType': 'Node'}, axis=1, inplace=True)
+
+    col_list = wafer_df.columns
+    new_col_list = []
+    for col in col_list:
+        if len(col) != 6:
+            new_col_list.append(col)
+        else:
+            year = col[2:4]
+            qtr = col[-2:]
+            new_col = "'"+ year + "-" + qtr
+            new_col_list.append(new_col)
+
+    wafer_df.columns = new_col_list
+
+    wafer_df["Scenario"] = site
+    wafer_df["NodeScenario"] = wafer_df["Node"] + wafer_df["Scenario"]
+
+    # pop wafer_df["NodeScenario"] and place at index 0
+    wafer_df.insert(1, "NodeScenario", wafer_df.pop("NodeScenario"))
+    # pop wafer_df["Scenario"] and place at index 1
+    wafer_df.insert(1, "Scenario", wafer_df.pop("Scenario"))
+
+    return wafer_df
 
 
 # Pandas makes site qtrly graph - nothing is returned
@@ -264,19 +239,28 @@ def xw_write_full(full, site, file_name):
 
 
 # Called if space graph workbook does exist
-def edit_space_graphs(space_alloc_table, bldg_space_table, file_name):
+def edit_space_graphs(space_alloc_table, bldg_space_table, file_name, node_rollup_df):
+    node_rollup_df = df_func.format_node_rollup(node_rollup_df)
 
     tmgsp_list_qtrly = []
     tmgsp_list = []
+    wafer_qtrly_site_list = []
     for site in site_list:
 
         monthly_df, qtrly_df = df_func.create_full_df(space_alloc_table, bldg_space_table, site, tmgsp_list, tmgsp_list_qtrly)
         xw_write_full(monthly_df, site, file_name)
-        make_xw_site_qtrly_graph(qtrly_df, site, file_name)
+        wafer_qtrly_site = make_xw_site_qtrly_graph(qtrly_df, site, file_name)
+        wafer_qtrly_site_list.append(wafer_qtrly_site)        
 
 
     make_xw_tmgsp_mntly_table(tmgsp_list, file_name)
     make_xw_tmgsp_qtrly_graph(tmgsp_list_qtrly, file_name)
+    wafer_node_df = df_func.make_wafer_qtrly_df(wafer_qtrly_site_list, node_rollup_df)
+    # write df to excel sheet
+    wb = xw.Book(file_name)
+    sheet = wb.sheets["SpaceAndCapacity"]
+    sheet.range("A1").options(index=False).value = wafer_node_df
+
 ########################################################################################################################
 
 
@@ -291,10 +275,10 @@ def create_space_graphs(writer, space_alloc_table, bldg_space_table):
     for site in site_list:
         full_wide, full_long = df_func.create_full_df(space_alloc_table, bldg_space_table, site, tmgsp_list, tmgsp_list_qtrly)
 
-        # Makes and saves chart
+        # Writes df to sheet, then makes and saves chart
         make_chart(full_wide, site, writer)
         make_pd_site_qtrly_graph(full_long, site, writer)
-
+    
     tmgsp_graphs(tmgsp_list, tmgsp_list_qtrly, writer)
 
 
@@ -308,3 +292,29 @@ def create_space_graph_wb(file_path, space_alloc_table, bldg_space_table):
     # Close the Pandas Excel writer and output the Excel file.
     writer.save()
 ########################################################################################################################
+
+# Begins to make the space graph workbook
+def main_graph_func(id_version, id_wif, conn, node_rollup_df):
+
+    space_alloc_table, bldg_space_table, version_name = db_func.get_db_data(conn, id_version, id_wif)
+
+    # Set excel file name
+    excel_file_name = r"pySpaceGraph v" + id_version + "w" + id_wif + "_" +version_name + ".xlsx"
+
+    # Check if file exists
+    folder = r".\graphs\\"
+
+    # Create graph directory if it does not exist
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+    file_path = folder + excel_file_name
+    file = pathlib.Path(file_path)
+    if file.exists():
+        print("File exist")
+        edit_space_graphs(space_alloc_table, bldg_space_table, file_path, node_rollup_df)
+
+    else:
+        print("File not exist")
+        create_space_graph_wb(file_path, space_alloc_table, bldg_space_table, node_rollup_df)
+
