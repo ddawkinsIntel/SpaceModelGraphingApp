@@ -171,6 +171,15 @@ def make_tmgsp_qtrly_df(tmgsp_list_qtrly):
 
     return tmgsp_df_qtrly_long
 
+def make_wafer_qtrly_df(wafer_qtrly_site_list, node_rollup_df):
+    # Concatenate list of dfs, fillna with 0 and groupby
+    wafer_df_full = pd.concat(wafer_qtrly_site_list)
+    wafer_df_full = wafer_df_full.fillna(0)
+
+    node_rollup_df = format_node_rollup(node_rollup_df)
+    wafer_node_df = pd.concat([wafer_df_full, node_rollup_df], ignore_index=True)
+
+    return wafer_node_df
 
 # Cleans and returns tmgsp qtrly df
 def clean_tmgsp_qtrly_df(tmgsp_df_qtrly_long):
@@ -200,3 +209,70 @@ def make_tmgsp_mntly_df(tmgsp_list):
     # tmgsp_df = tmgsp_df.append(tmgsp_df.sum(numeric_only=True).rename('Total')).reset_index()
     return tmgsp_df
 
+########################################################################################################################
+
+def format_node_rollup(node_rollup):
+    scenario = "SLRP Q3 '21"
+    # node_rollup = node_rollup[node_rollup["Scenario"] == scenario]
+    # remove_cols_list = ['12/31/1899', 'Scenario']
+    # node_rollup.drop(remove_cols_list, axis=1, inplace=True)
+
+    node_rollup.rename({'12/31/1899': 'NodeScenario'}, axis=1, inplace=True)
+    node_rollup.insert(2, "NodeScenario", node_rollup.pop("NodeScenario"))
+    node_rollup_df = node_mapping(node_rollup)
+    node_rollup_df = node_rollup_df[node_rollup_df['Node'].notna()]
+    node_rollup_df = node_rollup_df.drop_duplicates(subset=['NodeScenario'], keep='last')
+    node_rollup_df = node_rollup_df.fillna(0)
+
+    return node_rollup_df
+
+def node_mapping(df_filtered):
+
+    # List processes that belong to a process/node label
+    p1225_26 = ('1225', '1226')
+    p1214_16_17_42_43 = ('1214', '1216', '1217', '1242', '1243')
+    p1240 = ('1240', '1241', '1250')
+    _32nm = ('1268', '1269')
+    # _22nm = ('1270', '1271', '1270 Trade', '1271 Trade', '22nm')
+    _22nm = ('22nm', '22nm')
+    p1222 = ('1222', 'P1222', 'P1222 ULP')
+    # _14nm = ('1272', '1273', '1272 Trade', '1273 Trade', '14nm')
+    _14nm = ('14nm', '14nm')
+    # _10nm = ('1274', '1275', '10nm')
+    _10nm = ('10nm', '10nm')
+    p1276 = ('1276', 'P1276')
+    p1277 = ('1277', 'P1277')
+    p1278_79 = ('1278', 'P1278', '1279')
+    # p1278_79 = ('P1278-79', 'P1278-79')
+    # p1280_81 = ('1280', 'P1280', '1281', 'P1280')
+    p1280_81 = ('P1280-81', 'P1280-81')
+    p1282_83 = ('P1282-83', 'P1282-83')
+    _45nm = ('1266', '1266')
+    p1227 = ('P1227', 'p1227')
+
+    NodeTransDict = {}
+
+    # Adds process/node labels' process list as a value and the "process/node" label as a value to the dictionary
+    NodeTransDict.update(dict.fromkeys(p1225_26, "p1225_26"))
+    NodeTransDict.update(dict.fromkeys(p1240, "1240"))
+    NodeTransDict.update(dict.fromkeys(p1214_16_17_42_43, "p1214_16_17_42_43"))
+    NodeTransDict.update(dict.fromkeys(_32nm, "32nm"))
+    NodeTransDict.update(dict.fromkeys(_22nm, "1270"))
+    NodeTransDict.update(dict.fromkeys(p1222, "1222"))
+    NodeTransDict.update(dict.fromkeys(_14nm, "1272"))
+    NodeTransDict.update(dict.fromkeys(_10nm, "1274"))
+    NodeTransDict.update(dict.fromkeys(p1276, "1276"))
+    NodeTransDict.update(dict.fromkeys(p1277, "1277"))
+    NodeTransDict.update(dict.fromkeys(p1278_79, "1278"))
+    NodeTransDict.update(dict.fromkeys(p1280_81, "1280"))
+    NodeTransDict.update(dict.fromkeys(p1282_83, "1282"))
+    NodeTransDict.update(dict.fromkeys(_45nm, "45nm"))
+    NodeTransDict.update(dict.fromkeys(p1227, "1227"))
+
+
+    # Maps values in the "Process" column to the proper "Process/Node" label for the Space Model if the value
+    # ...in "Process" isn't in the list of processes that belong to a "Process/Node" label" the value becomes null
+    # df_filtered["Process"] = df_filtered["Process"].astype(str).apply(lambda x: NodeTransDict.get(x)) # OG line
+    df_filtered["Node"] = df_filtered["Node"].astype(str).apply(lambda x: NodeTransDict.get(x)) # Mod'd line for RoadmapInputs file
+
+    return df_filtered
