@@ -5,15 +5,14 @@ import tkinter as tk
 from tkinter import messagebox
 import os
 import database_funtions as db_func
-import graph_write_functions as gw_func
+import primary_functions as pf
 import xlwings as xw
-import pandas as pd
 
 ########################################################################################################################
 
 
 
-# After values are verified, this fires up the program
+# After values are verified, this starts the program
 def fire_up(id_version, id_wif, s_trk_wb, s_trk_sheet):
     # Convert id_version and id_wif to string
     id_version = str(id_version)
@@ -22,13 +21,17 @@ def fire_up(id_version, id_wif, s_trk_wb, s_trk_sheet):
     # Intiates connection to the sql server
     cnxn = db_func.initiate_conn()
 
-    # Get values from "wb_from" & set as capacity_sheet
-    s_trk_wb = xw.books[s_trk_wb]
-    node_sheet = s_trk_wb.sheets[s_trk_sheet]
-    node_rollup_df = node_sheet.range('A1').options(pd.DataFrame, index=False, expand='table').value
+    if s_trk_wb == "None":
+        node_sheet = None
+        pf.main_graph_func(id_version, id_wif, cnxn, node_sheet)
 
-    # Make the space graph workbook
-    gw_func.main_graph_func(id_version, id_wif, cnxn, node_rollup_df)
+    else:
+        # Get values from "wb_from" & set as capacity_sheet
+        s_trk_wb = xw.books[s_trk_wb]
+        node_sheet = s_trk_wb.sheets[s_trk_sheet]
+
+        # Make the space graph workbook
+        pf.main_graph_func(id_version, id_wif, cnxn, node_sheet)
 
     current_directory = os.getcwd()
     success_msg = "Graphs are located in the following folder.... \n \n" + current_directory
@@ -98,7 +101,7 @@ scr_trk_sheet = tk.StringVar()
 root.title('Space Model Graphing App')
 root.geometry('550x300') # window size
 
-book_name_list = []
+book_name_list = ["None"]
 for i in range(len(xw.books)):
     book_name_list.append(xw.books[i].name)
 
