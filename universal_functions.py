@@ -275,7 +275,7 @@ def combine_wafer_qtrly_df(wafer_qtrly_site_list, node_rollup_df):
     wafer_df_full = wafer_df_full.fillna(0)
 
     node_rollup_df = format_node_rollup(node_rollup_df)
-    wafer_node_df = pd.concat([wafer_df_full, node_rollup_df], ignore_index=True)
+    wafer_node_df = pd.concat([wafer_df_full, node_rollup_df], ignore_index=True, sort=False)
 
     return wafer_node_df
 
