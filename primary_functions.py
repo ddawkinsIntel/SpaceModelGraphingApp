@@ -13,10 +13,9 @@ def main_graph_func(id_version, id_wif, conn, node_sheet):
     space_alloc_table, bldg_space_table, version_name = db_func.get_db_data(conn, id_version, id_wif)
 
     # Set excel file name
-    excel_file_name = "pySpaceGraph v" + id_version + "w" + id_wif + "_" +version_name + ".xlsx"
-
+    excel_file_name = f'pySpaceGraph v{id_version}w{id_wif}_{version_name}.xlsx'
     # Check if file exists
-    folder = ".\graphs\\"
+    folder = '.\graphs\\'
 
     # Create graph directory if it does not exist
     if not os.path.exists(folder):

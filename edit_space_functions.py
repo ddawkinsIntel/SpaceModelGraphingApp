@@ -58,9 +58,6 @@ def make_xw_tmgsp_mntly_table(tmgsp_list, file_name):
 
 
 def xw_write(df, file_name, sheet_name, df_cell='A1', sort=True):
-    # Make file name raw
-    file_name = r"{}".format(file_name)
-
     # write df to excel sheet
     wb = xw.Book(file_name)
 
