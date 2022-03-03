@@ -190,7 +190,7 @@ def clean_site_qtrly_df(tmgsp_df_qtrly_long):
 # Makes, formats and returns tmgsp qtrly df
 def make_tmgsp_qtrly_df(tmgsp_list_qtrly):
     # Concatenate list of dfs, fillna with 0 and groupby
-    tmgsp_df_qtrly_long = pd.concat(tmgsp_list_qtrly)
+    tmgsp_df_qtrly_long = pd.concat(tmgsp_list_qtrly, sort=False)
     tmgsp_df_qtrly_long = tmgsp_df_qtrly_long.fillna(0)
     tmgsp_df_qtrly_long = tmgsp_df_qtrly_long.groupby(['CapacityType']).sum().reset_index()
 
