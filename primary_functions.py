@@ -5,7 +5,7 @@ import pandas as pd
 import create_space_functions as csf
 import edit_space_functions as esf
 import universal_functions as uf
-
+import xlwings as xw
 
 # Begins to make the space graph workbook
 def main_graph_func(id_version, id_wif, conn, node_sheet):
@@ -35,7 +35,23 @@ def main_graph_func(id_version, id_wif, conn, node_sheet):
     # Check if file exists
     if file.exists():
         print("File exist")
-        esf.edit_space_graphs(space_alloc_table, bldg_space_table, file_path, node_rollup_df)
+
+        active_xl_books = xw.books
+        book_name_list = []
+        for i in range(len(active_xl_books)):
+            book_name_list.append(active_xl_books[i].name)
+        # print(book_name_list)
+
+        # Check if file is open
+        if excel_file_name in book_name_list:
+            wb = xw.Book(excel_file_name)
+            print("used book name")
+        else:
+            # write df to excel sheet
+            wb = xw.books.open(file_path)
+            print("used file path")
+
+        esf.edit_space_graphs(space_alloc_table, bldg_space_table, wb, node_rollup_df)
 
     else:
         print("File not exist")

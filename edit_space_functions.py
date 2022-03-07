@@ -5,9 +5,7 @@ import universal_functions as uf
 # When the space graph workbook already exists....
 
 # Called if space graph workbook does exist
-def edit_space_graphs(space_alloc_table, bldg_space_table, file_name, node_rollup_df):
-    # write df to excel sheet
-    wb = xw.Book(file_name)
+def edit_space_graphs(space_alloc_table, bldg_space_table, wb, node_rollup_df):
 
     tmgsp_list_qtrly = []
     tmgsp_list = []
