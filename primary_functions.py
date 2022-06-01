@@ -10,10 +10,10 @@ import xlwings as xw
 # Begins to make the space graph workbook
 def main_graph_func(id_version, id_wif, conn, node_sheet):
 
-    space_alloc_table, bldg_space_table, version_name = db_func.get_db_data(conn, id_version, id_wif)
+    space_alloc_table, bldg_space_table, version_name, wif_name = db_func.get_db_data(conn, id_version, id_wif)
 
     # Set excel file name
-    excel_file_name = f'pySpaceGraph v{id_version}w{id_wif}_{version_name}.xlsx'
+    excel_file_name = f'{wif_name}w{id_wif}v{id_version}_{version_name}.xlsx'
     # Check if file exists
     folder = '.\graphs\\'
 
