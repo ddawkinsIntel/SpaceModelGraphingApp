@@ -8,8 +8,8 @@ def initiate_conn():
 
     # Initiate Connection to the db
     conn = pyodbc.connect('Driver={SQL Server};'
-                          'Server=devpofco100.amr.corp.intel.com, 3180;'
-                          'Database=SpaceModel_PROD_Bridge;'
+                          'Server=sql2557-fm1s-in.amr.corp.intel.com, 3181;'
+                          'Database=SpaceModel_PROD;'
                           'UID=AMR\ddawkins;'
                           'Trusted_Connection=yes;'
                           )
@@ -26,11 +26,22 @@ def get_version_info(conn):
 
     return table_version
 
+# Returns wif info table
+def get_wif_info(conn, id_version):
+    sql = """\
+    EXEC sml.pr_Wif_Get @VersionID = ?
+    """
+
+    table_wif = pd.read_sql(sql, conn, params=[id_version])
+
+    return table_wif
 
 # From version table, returns the version name
-def get_version_name(conn, id_version):
-    # Get version info
+def get_version_name(conn, id_version, id_wif):
+
+    # Get version and wif info
     version_info = get_version_info(conn)
+    wif_info = get_wif_info(conn, id_version)
 
     # Get version name from version info, using the versionId
     version = version_info[version_info["VersionID"] == int(id_version)]
@@ -38,7 +49,18 @@ def get_version_name(conn, id_version):
     version_name = version["VersionName"].values
     version_name = version_name[0]
 
-    return version_name
+    if id_wif != "0":
+        # Get wif name from wif info, using the versionId
+        wif = wif_info[wif_info["WifId"] == int(id_wif)]
+
+        wif_name = wif["Name"].values
+        wif_name = wif_name[0]
+    
+    else:
+        wif_name = ""
+
+
+    return version_name, wif_name
 
 
 # HF - get_building_space: Returns building space table
@@ -111,8 +133,6 @@ def get_rpt_solver(conn, id_version, id_wif):
     sql = """\
     EXEC sml.pr_Rpt_SolverSpaceAlloc @VersionID = ?, @WIFID = ?
     """
-    # test = cursor.execute(sql, params)
-    print("here", id_version)
     table_space_alloc = pd.read_sql(sql, conn, params=[id_version, id_wif])
 
     return table_space_alloc
@@ -128,7 +148,7 @@ def get_db_data(conn, id_version, id_wif):
     bldg_space_table = get_building_space(conn, id_version)
 
     # Get the versions name(i.e. 2021Q3LRP Deramp)
-    version_name = get_version_name(conn, id_version)
+    version_name, wif_name = get_version_name(conn, id_version, id_wif)
 
-    return space_alloc_table, bldg_space_table, version_name
+    return space_alloc_table, bldg_space_table, version_name, wif_name
 ########################################################################################################################
