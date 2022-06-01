@@ -15,3 +15,5 @@ How:
   -  If "WIF ID" is left blank it will default to 0
 - Click the "Submit" or press "enter" to run the script
 - If valid data is entered, the script will output a graph and save it in a folder named "graphs" at the same place the user saved the .exe file
+
+package: pyinstaller main.py -F -n SpaceModelGraphApp --icon factory.ico --clean
