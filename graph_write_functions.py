@@ -43,7 +43,7 @@ def make_chart(df, site_val, pd_writer, start_row=0, chart_cell="G12"):
     area_chart = workbook.add_chart({'type': 'area', 'subtype': 'stacked'})
 
     # Get shape without including wafer volume rows
-    non_wafer_df = df[~df["CapacityType"].str.contains("WSVolume")]
+    non_wafer_df = df[~(df["CapacityType"].str.contains("WSVolume") | df["CapacityType"].str.contains("TotalSpaceUsed"))]
 
     # Number of columns
     ncols = non_wafer_df.shape[1]-1
@@ -74,6 +74,12 @@ def make_chart(df, site_val, pd_writer, start_row=0, chart_cell="G12"):
 
         elif colname == "Install":
             color = "#00B050"
+
+            # Area chart series
+            add_area_chart_series(area_chart, color, sheet_name, row, ncols, start_row)
+
+        elif colname == "DedicatedSpace":
+            color = "#BBBCA0"
 
             # Area chart series
             add_area_chart_series(area_chart, color, sheet_name, row, ncols, start_row)

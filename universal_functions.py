@@ -5,19 +5,38 @@ site_list = ['AZ', 'IR', 'IS', 'LTD', 'HVM1', 'HVM2', 'HVM3', 'HVM4', 'HVM5', 'N
 
 # Sorts df so excel graphs always show install and demo at the top
 def sort_df_rows(df):
+
+    # Get only production rows
+    dedicated_df = df[df["CapacityType"].str.contains("DedicatedSpace")]
+
     # Get only production rows
     production_df = df[df["CapacityType"].str.contains("Production")]
 
     # Get only install demo and mcrsf rows
-    install_demo_mcrsf_df = df[~(df["CapacityType"].str.contains("Production") | df["CapacityType"].str.contains("WSVolume"))]
+    install_demo_mcrsf_df = df[(df["CapacityType"].str.contains("Install")) | (df["CapacityType"].str.contains("Demo")) | (df["CapacityType"].str.contains("MCRSF"))]
 
     # Get only wafer volume rows
     wafer_df = df[df["CapacityType"].str.contains("WSVolume")]
 
     # concatenating df1 and df2 along rows
-    sorted_df = pd.concat([production_df, install_demo_mcrsf_df, wafer_df], axis=0)
+    sorted_df = pd.concat([dedicated_df, production_df, install_demo_mcrsf_df, wafer_df], axis=0)
 
     sorted_df = sorted_df.fillna(0)
+    sorted_df.reset_index(drop=True, inplace=True)
+
+    # Get total space used
+    total_space_usage_df = sorted_df[~(sorted_df["CapacityType"].str.contains("WSVolume") | 
+                                            sorted_df["CapacityType"].str.contains("MCRSF") | 
+                                                sorted_df["CapacityType"].str.contains("DedicatedSpace"))]
+
+    total_space_usage_df.loc["TotalSpaceUsed"] = total_space_usage_df.sum()
+
+    # Name "CapacityType" value TotalSpaceUsed
+    total_space_usage_df.loc["TotalSpaceUsed", "CapacityType"] = "TotalSpaceUsed"
+
+    # Adding the "TotalSpaceUsed" row to sorted_df
+    sorted_df.loc[len(sorted_df.index)] = total_space_usage_df.loc["TotalSpaceUsed"]
+
 
     return sorted_df
 ########################################################################################################################
@@ -75,6 +94,7 @@ def make_cap_type_dfs(df_space, site):
     install_df = df_space.copy()
     demo_df = df_space.copy()
     df_wafer = df_space.copy()
+    dedicated_df = df_space.copy()
 
     prod_col_list = ['FEProduction', 'BEProduction', 'FEFabTPT', 'BEFabTPT']
     install_col_list = ['FEInstall', 'BEInstall']
@@ -83,16 +103,18 @@ def make_cap_type_dfs(df_space, site):
     df_install = proc_capacity_col_piv(install_df, "Install", install_col_list)
     df_demo = proc_capacity_col_piv(demo_df, "Demo")
     df_wafer = proc_capacity_col_piv(df_wafer, "WSVolume")
+    df_dedicated = proc_capacity_col_piv(dedicated_df, "DedicatedSpace")
 
-    return df_prod, df_install, df_demo, df_wafer
+    return df_prod, df_install, df_demo, df_wafer, df_dedicated
 
 
 # Creates returns full_df by merging dataframes
-def make_full_df(df_prod, df_install, df_demo, df_wafer, df_bldg, site):
+def make_full_df(df_prod, df_install, df_demo, df_wafer, dedicated_df, df_bldg, site):
     df_full = df_prod.merge(df_install, how="outer", on="Month")
     df_full = df_full.merge(df_demo, how="outer", on="Month")
     df_full = df_full.merge(df_bldg, how="outer", on="Month")
     df_full = df_full.merge(df_wafer, how="outer", on="Month")
+    df_full = df_full.merge(dedicated_df, how="outer", on="Month")
 
     # changing column name
     df_full.rename({'Month': 'CapacityType'}, axis=1, inplace=True)
@@ -134,10 +156,10 @@ def create_full_df(space_alloc_table, bldg_space_table, site, tmgsp_list, tmgsp_
     bldg_site_df = bldg_space_df_reducer(bldg_space_table, site)
 
     # Makes a prod, install and demo df from the space df
-    prod_df, install_df, demo_df, wafer_df = make_cap_type_dfs(space_alloc_table, site)
+    prod_df, install_df, demo_df, wafer_df, dedicated_df = make_cap_type_dfs(space_alloc_table, site)
 
     # Merges all data frames
-    full_long = make_full_df(prod_df, install_df, demo_df, wafer_df, bldg_site_df, site)
+    full_long = make_full_df(prod_df, install_df, demo_df, wafer_df, dedicated_df, bldg_site_df, site)
 
     # Append the full df to the tmgsp_list
     tmgsp_list_qtrly.append(full_long)
