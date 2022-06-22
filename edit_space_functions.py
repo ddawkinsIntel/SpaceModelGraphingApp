@@ -13,7 +13,7 @@ def edit_space_graphs(space_alloc_table, bldg_space_table, wb, node_rollup_df):
     for site in uf.site_list:
 
         monthly_df, qtrly_df = uf.create_full_df(space_alloc_table, bldg_space_table, site, tmgsp_list, tmgsp_list_qtrly)
-        xw_write(wb, monthly_df, site, sort=False) # Write SITE monthly and quarterly dataframe to excel
+        xw_write(wb, monthly_df, site, sort=True) # Write SITE monthly and quarterly dataframe to excel
         site_qtrly_df = make_xw_site_qtrly_graph(wb, qtrly_df, site)
         wafer_site_qtrly_df = uf.make_wafer_site_qtrly_df(site_qtrly_df, site)
         wafer_site_qtrly_list.append(wafer_site_qtrly_df)        
