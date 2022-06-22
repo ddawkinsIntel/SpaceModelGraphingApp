@@ -10,6 +10,7 @@ import xlwings as xw
 # Begins to make the space graph workbook
 def main_graph_func(id_version, id_wif, conn, node_sheet):
 
+    # Get data from database
     space_alloc_table, bldg_space_table, version_name, wif_name = db_func.get_db_data(conn, id_version, id_wif)
 
     # Set excel file name
@@ -40,7 +41,6 @@ def main_graph_func(id_version, id_wif, conn, node_sheet):
         book_name_list = []
         for i in range(len(active_xl_books)):
             book_name_list.append(active_xl_books[i].name)
-        # print(book_name_list)
 
         # Check if file is open
         if excel_file_name in book_name_list:
