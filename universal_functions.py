@@ -26,8 +26,7 @@ def sort_df_rows(df):
 
     # Get total space used
     total_space_usage_df = sorted_df[~(sorted_df["CapacityType"].str.contains("WSVolume") | 
-                                            sorted_df["CapacityType"].str.contains("MCRSF") | 
-                                                sorted_df["CapacityType"].str.contains("DedicatedSpace"))]
+                                            sorted_df["CapacityType"].str.contains("MCRSF"))]
 
     total_space_usage_df.loc["TotalSpaceUsed"] = total_space_usage_df.sum()
 
