@@ -1,6 +1,6 @@
-import numpy.random.common
-import numpy.random.bounded_integers
-import numpy.random.entropy
+# import numpy.random.common
+# import numpy.random.bounded_integers
+# import numpy.random.entropy
 import tkinter as tk
 from tkinter import messagebox
 import os
@@ -20,18 +20,21 @@ def fire_up(id_version, id_wif, s_trk_wb, s_trk_sheet):
 
     # Intiates connection to the sql server
     cnxn = db_func.initiate_conn()
+    pf.main_graph_func(id_version, id_wif, cnxn, None)
 
-    if s_trk_wb == "None":
-        node_sheet = None
-        pf.main_graph_func(id_version, id_wif, cnxn, node_sheet)
+    # ZBB'd - was used for pulling in the scenario tracker data
+    # if s_trk_wb == "None":
+    #     node_sheet = None
+    #     pf.main_graph_func(id_version, id_wif, cnxn, node_sheet)
 
-    else:
-        # Get values from "wb_from" & set as capacity_sheet
-        s_trk_wb = xw.books[s_trk_wb]
-        node_sheet = s_trk_wb.sheets[s_trk_sheet]
+    # else:
+    #     # Get values from "wb_from" & set as capacity_sheet
+    #     s_trk_wb = xw.books[s_trk_wb]
+    #     node_sheet = s_trk_wb.sheets[s_trk_sheet]
 
-        # Make the space graph workbook
-        pf.main_graph_func(id_version, id_wif, cnxn, node_sheet)
+    #     # Make the space graph workbook
+    #     pf.main_graph_func(id_version, id_wif, cnxn, node_sheet)
+
 
     current_directory = os.getcwd()
     success_msg = "Graphs are located in the following folder.... \n \n" + current_directory
@@ -75,9 +78,12 @@ def get_value():
         root.update()
 
     # # For testing
-    # int(version_value)
+    # if not wif_value:
+    #     wif_value = 0
+    # else:
+    #     int(wif_value)
     # print(version_value)
-    # fire_up(version_value)
+    # print(wif_value)
     # fire_up(version_value, wif_value, scr_trk_wb, scr_trk_sheet)
 
 
@@ -99,17 +105,18 @@ scr_trk_sheet = tk.StringVar()
 
 # Window title
 root.title('Space Model Graphing App')
-root.geometry('550x300') # window size
+root.geometry('350x175') # window size
 
-book_name_list = ["None"]
-for i in range(len(xw.books)):
-    book_name_list.append(xw.books[i].name)
+# ZBB'd - was used for pulling in the scenario tracker data
+# book_name_list = ["None"]
+# for i in range(len(xw.books)):
+#     book_name_list.append(xw.books[i].name)
 
-# Workbook dropdown menu options
-wb_options = book_name_list
+# # Workbook dropdown menu options
+# wb_options = book_name_list
 
-# Initial Workbook dropdown menu text
-scr_trk_workbook.set(book_name_list[0])
+# # Initial Workbook dropdown menu text
+# scr_trk_workbook.set(book_name_list[0])
 
 
 # Creates version label and entry field 
@@ -122,10 +129,11 @@ wif_label = tk.Label(root, text="Enter WIF ID:").grid(row=2, column=1, sticky=tk
 wif_entry = tk.Entry(root, width=30, textvariable=wifValue)
 wif_entry.grid(row=2, column=2, sticky=tk.W, pady=15)
 
-# Create "Cap Workbook" Dropdown menu
-scr_trk_workbook_label = tk.Label(root, text="S.Tracker Workbook:").grid(row=3, column=1, sticky=tk.W, pady=15)
-scr_trk_workbook_op = tk.OptionMenu( root , scr_trk_workbook , *wb_options )
-scr_trk_workbook_op.grid(row=3, column=2, sticky=tk.W, pady=15)
+# Was using the below chunck of code to pullin a scenario track to eventually add a visual that includes the capacity bar garphs
+# # Create "Cap Workbook" Dropdown menu
+# scr_trk_workbook_label = tk.Label(root, text="S.Tracker Workbook:").grid(row=3, column=1, sticky=tk.W, pady=15)
+# scr_trk_workbook_op = tk.OptionMenu( root , scr_trk_workbook , *wb_options )
+# scr_trk_workbook_op.grid(row=3, column=2, sticky=tk.W, pady=15)
 
 # # Creates wif label and entry field 
 # scr_trk_sheet_label = tk.Label(root, text="S.Tracker Sheet Name:").grid(row=4, column=1, sticky=tk.W, pady=15)
