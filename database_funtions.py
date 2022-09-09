@@ -139,7 +139,21 @@ def get_rpt_solver(conn, id_version, id_wif):
 
 
 # Gets and Returns all needed DB data
-def get_db_data(conn, id_version, id_wif):
+def get_db_data(conn, id_version, wif_counter):
+
+    # Get wif info
+    wif_info_table = get_wif_info(conn, id_version)
+
+    wif_counter = int(wif_counter)
+    
+    if wif_counter == 0:
+        id_wif = "0"
+
+    else:
+        wif_info_table = wif_info_table[wif_info_table["WIFCounter"] == wif_counter]
+
+        id_wif = wif_info_table.iloc[0]['WifId']
+        id_wif = str(id_wif)
 
     # Get space alloc table
     space_alloc_table = get_rpt_solver(conn, id_version, id_wif)
