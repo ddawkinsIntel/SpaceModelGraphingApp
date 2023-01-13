@@ -1,7 +1,6 @@
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
 
-# Select what site to iterate through
-site_list = ['AZ', 'IR', 'IS', 'LTD', 'HVM1', 'HVM2', 'HVM3', 'HVM4', 'HVM5', 'NM']
 
 # Sorts df so excel graphs always show install and demo at the top
 def sort_df_rows(df):
