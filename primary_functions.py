@@ -39,11 +39,18 @@ def main_graph_func(id_version, id_wif, conn, node_sheet):
 
     # Check if file exists and edits the file, else creates new file
     if file.exists():
-        print("File exist")
+        print("File exists, editing the existing file... \n")
 
         # Intiate an 'xw' object that contains all the active(open) excel workbooks
-        active_xl_books = xw.books
-        book_name_list = []
+        try:
+            book_name_list = []
+            active_xl_books = xw.books
+            print(active_xl_books)
+
+        except AttributeError:
+            print('No active excel workbooks....')
+            print('....opening Excel \n')
+            xw.Book()
 
         # Loop through active excel workbooks and adds there name to the book_name_list
         for i in range(len(active_xl_books)):
@@ -52,16 +59,15 @@ def main_graph_func(id_version, id_wif, conn, node_sheet):
         # Check if the intended file is active by checking if it's in the book_name_list 
         if excel_file_name in book_name_list:
             wb = xw.Book(excel_file_name) # stores value of the active sheet, since it's active file_path not needed
-            print("used book name")
+
         else:
             # write df to excel sheet
             wb = xw.books.open(file_path) # stores path to the intended file
-            print("used file path")
 
         esf.edit_space_graphs(space_alloc_table, bldg_space_table, wb, node_rollup_df)
 
     else:
-        print("File not exist")
+        print("File does not exist, createing a new file... \n")
         csf.create_space_graph_wb(file_path, space_alloc_table, bldg_space_table, node_rollup_df)
 
 
