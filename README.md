@@ -19,7 +19,7 @@ How:
   -  If "WIF ID" is left blank it will default to 0
 - Click the "Submit" or press "enter" to run the script
 - If valid data is entered, the script will output a graph and save it in a folder named "graphs" at the same place the user saved the .exe file
-- If you'd like to customize the colors for the processes use the SpaceModelColorMap.xlsx template located <a>here</a> and save it in the same location as the .exe file
+- If you'd like to customize the colors for the processes use the SpaceModelColorMap.xlsx template located <a href="https://www.google.com/">here</a> and save it in the same location as the .exe file
   - If you use the choose to use the template, you MUST declare a color for all process that are being used, else a default color will be used
 
 Troubleshooting:
