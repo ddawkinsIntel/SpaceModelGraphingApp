@@ -1,3 +1,7 @@
+print('Welcome to the Space Model Graphing app, click the link below to learn more \n')
+print('https://github.com/ddawkinsIntel/SpaceModelGraphingApp#readme')
+print('\n')
+
 # import numpy.random.common
 # import numpy.random.bounded_integers
 # import numpy.random.entropy

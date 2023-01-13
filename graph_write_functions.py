@@ -22,7 +22,7 @@ if os.path.exists(color_file):
     color_map_dict = color_map_dict['Hex Color']
 
     print('Using user Color Map....')
-    print('color map: ', color_map_dict)
+    print('color map: ', color_map_dict, '\n')
 
 else:
     color_map_dict = proc_color_dict
