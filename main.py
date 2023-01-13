@@ -1,7 +1,7 @@
 print('\n')
 print('\n')
 print('\n')
-print('Welcome to the Space Model Graphing app, click the link below to learn more \n')
+print('Welcome to the Space Model Graphing app, go to the link below to learn more \n')
 print('https://github.com/ddawkinsIntel/SpaceModelGraphingApp#readme')
 print('\n')
 
