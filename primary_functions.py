@@ -45,7 +45,6 @@ def main_graph_func(id_version, id_wif, conn, node_sheet):
         try:
             book_name_list = []
             active_xl_books = xw.books
-            print(active_xl_books)
 
         except AttributeError:
             print('No active excel workbooks....')

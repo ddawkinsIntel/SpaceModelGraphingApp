@@ -1,3 +1,6 @@
+print('\n')
+print('\n')
+print('\n')
 print('Welcome to the Space Model Graphing app, click the link below to learn more \n')
 print('https://github.com/ddawkinsIntel/SpaceModelGraphingApp#readme')
 print('\n')
@@ -49,6 +52,7 @@ def get_value():
 
         print("version value is: ", version_value)
         print("wif value is: ", wif_value)
+        print('\n')
 
         # starts the application logic
         fire_up(version_value, wif_value)
