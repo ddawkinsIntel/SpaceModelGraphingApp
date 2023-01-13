@@ -7,8 +7,8 @@ What:
 - Python desktop app in the form of an exe file
 
 WARNING:
-- MUST have an excel file (it can blank) open when running the app
-- Make sure you have solved for the scenario you are trying to graph, or 
+- MUST have an excel file open when running the app
+- Make sure you have already solved for the scenario you are trying to graph
 
 How: 
 - Download and save the .exe file in a folder of your choice
@@ -19,13 +19,15 @@ How:
   -  If "WIF ID" is left blank it will default to 0
 - Click the "Submit" or press "enter" to run the script
 - If valid data is entered, the script will output a graph and save it in a folder named "graphs" at the same place the user saved the .exe file
+- If you'd like to customize the colors for the processes use the SpaceModelColorMap.xlsx template located here and save it in the same location as the .exe file
+  - If you use the choose to use the template, you MUST declare a color for all process that are being used, else a default color will be used
 
 Troubleshooting:
-- MUST have an excel file (it can blank) open when running the app
-- All graphs are blank, make sure you solved for the scenario you are trying to graph
+- Getting an Error? Make sure you have an excel file open, the file can be blank, when running the app
+- All graphs are blank? Make sure you solved for the scenario you are trying to graph
 - If you add or remove a process after initially making the graphs, then you MUST delete the original graphing file PRIOR to re-running the graphs
 - For any other issues, 
-    1. When in doubt delete the original file
+    1. When in doubt delete the original output file
     2. Solve the space model scenario 
     3. Re-run the graphing app
 
