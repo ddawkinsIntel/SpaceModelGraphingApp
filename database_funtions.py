@@ -2,6 +2,9 @@
 
 import pyodbc
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
+import warnings
+warnings.filterwarnings("ignore")
 
 # Initiates DB connection - returns a "conn"
 def initiate_conn():
@@ -43,12 +46,14 @@ def get_version_name(conn, id_version, id_wif):
     version_info = get_version_info(conn)
     wif_info = get_wif_info(conn, id_version)
 
-    # Get version name from version info, using the versionId
+    # Get version name from version info table by filtiring by the versionId
     version = version_info[version_info["VersionID"] == int(id_version)]
 
+    # Get and store the VersionName value from version table
     version_name = version["VersionName"].values
     version_name = version_name[0]
 
+    # If a wif value is entered (i.e. wif value is not zero), get the wif name
     if id_wif != "0":
         # Get wif name from wif info, using the versionId
         wif = wif_info[wif_info["WifId"] == int(id_wif)]
@@ -68,7 +73,7 @@ def read_bldg_space(conn, id_version):
     sql = """\
     EXEC sml.pr_BuildingSpace_Get @VersionID = ?
     """
-    # test = cursor.execute(sql, params)
+
     table_building_space = pd.read_sql(sql, conn, params=[id_version])
 
     return table_building_space
@@ -78,7 +83,7 @@ def get_site(conn):
     sql = """\
     EXEC sml.pr_Site_Get
     """
-    # test = cursor.execute(sql, params)
+
     site_df = pd.read_sql(sql, conn)
 
     return site_df 
