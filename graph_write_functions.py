@@ -1,8 +1,32 @@
 import universal_functions as uf
+import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
+import os
+import xlwings as xw
 
 # Process Color Dictionary
 proc_color_dict = {1222: '#ED7D31', 1270: '#A5A5A5', 1272: '#FFC000', 1274: '#5B9BD5', 1276: 'purple', 1277: '#403152',
                    1278: '#663300', 1280: '#71FFBF', 1282: '#FAC090', 1284:'#B3A2C7', 1286:'#D99694'}
+
+
+# color_file location for the graph
+color_file = 'SpaceModelColorMap.xlsx'
+
+# Create the 'graphs' folder, if it does not exist
+if os.path.exists(color_file):
+
+    color_map_df = pd.read_excel(color_file, index_col=[0])
+
+    # Convert color_map_df into a dictionary
+    color_map_dict = color_map_df.to_dict()
+    color_map_dict = color_map_dict['Hex Color']
+
+    print('Using user Color Map....')
+    print('color map: ', color_map_dict)
+
+else:
+    color_map_dict = proc_color_dict
+    print('Using standard color map')
 
 
 # Add chart series
@@ -86,7 +110,8 @@ def make_chart(df, site_val, pd_writer, start_row=0, chart_cell="G12"):
 
         else:
             process = int(colname[:4])
-            color = proc_color_dict.get(process, "#fc03df")
+            color = color_map_dict.get(process, "#fc03df")
+            
 
             # Area chart series
             add_area_chart_series(area_chart, color, sheet_name, row, ncols, start_row)
@@ -105,7 +130,7 @@ def make_chart(df, site_val, pd_writer, start_row=0, chart_cell="G12"):
     # Insert the chart into the worksheet @ cell G12
     worksheet.insert_chart(chart_cell, area_chart)
 
-
+# Not in use - Attempted to make a stacked bar chart
 def make_stacked_bar(df, site_val, pd_writer, start_row=0, chart_cell="G12"):
 
     # Use site value as sheet name
