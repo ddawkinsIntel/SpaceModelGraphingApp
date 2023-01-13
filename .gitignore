@@ -4,3 +4,5 @@ dist
 __pycache__
 SpaceModelGraphApp.spec
 graphs
+SpaceModelGraphAppV2.spec
+SimulationScript.spec
