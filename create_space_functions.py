@@ -1,4 +1,5 @@
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
 import universal_functions as uf
 import graph_write_functions as gwf
 import edit_space_functions as esf
@@ -19,11 +20,15 @@ def create_space_graph_wb(file_path, space_alloc_table, bldg_space_table, node_r
 # Creates space graphs
 def create_space_graphs(writer, space_alloc_table, bldg_space_table, node_rollup_df):
 
+    site_list = space_alloc_table.Site.unique()
+    site_list.sort()
+    site_list = sorted(site_list, key=len, reverse=False)
+
     tmgsp_list_qtrly = []
     tmgsp_list = []
     wafer_site_qtrly_list = []
     ####################################################################################################################
-    for site in uf.site_list:
+    for site in site_list:
         full_wide, full_long = uf.create_full_df(space_alloc_table, bldg_space_table, site, tmgsp_list, tmgsp_list_qtrly)
 
         # Writes df to sheet, then makes and saves chart
