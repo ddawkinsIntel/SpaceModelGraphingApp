@@ -14,7 +14,7 @@ WARNING:
 How: 
 - Download and save...
   * the .exe file, located <a href="https://intel.sharepoint.com/:f:/r/sites/tmgspcapdesign/Shared%20Documents/Space?csf=1&web=1&e=wVSzW6">here</a> in a folder of your choice (preferably to a location that is easy to find)
-  * the config file, located <a href="https://intel.sharepoint.com/:x:/r/sites/tmgspcapdesign/Shared%20Documents/General/Documentation/SpaceModelGraphingAppFiles/ConfigFile.xlsx?d=w478c37764b624fc78146d3dcf512b5e3&csf=1&web=1&e=whGM3x>here</a> in the same folder as the .exe file
+  * the config file, located <a href="https://intel.sharepoint.com/:x:/r/sites/tmgspcapdesign/Shared%20Documents/General/Documentation/SpaceModelGraphingAppFiles/ConfigFile.xlsx?d=w478c37764b624fc78146d3dcf512b5e3&csf=1&web=1&e=bMZaQs">here</a> in the same folder as the .exe file
 - Populate "ConfigFile.xlsx" iwith your UID (ex. AMR\ddawkins)
   - DO NOT alter the Server & Database values, unless Uma or ZZ say the Server or Database values have changed
   - Save and close this file after making changes
