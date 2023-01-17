@@ -9,6 +9,7 @@ What:
 WARNING:
 - MUST have an excel file open when running the app
 - Make sure you have already solved for the scenario you are trying to graph
+- Be sure to populate the config file appropriately, and it is saved to same location as the .exe file
 
 How: 
 - Download and save the .exe file in a folder of your choice
