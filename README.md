@@ -33,8 +33,9 @@ WARNING:
 
 <h2>Troubleshooting:</h2>
 
-- Getting an Error? Make sure you have an excel file open, the file can be blank, when running the app
+- NoneType' object has no attribute 'books'? Make sure you have an excel file open, the file can be blank, when running the app
 - Permission Denied? Make sure to save and close the "ConfigFile" and "SpaceModelColorMap" file after making changes
+- local variable 'config_dict' referenced before assignment? Save the "ConfigFile" in the same location as the .exe file
 - All graphs are blank? Make sure you solved for the scenario you are trying to graph
 - If you add or remove a process after initially making the graphs, then you MUST delete the original graphing file PRIOR to re-running the graphs
 - For any other issues, 
