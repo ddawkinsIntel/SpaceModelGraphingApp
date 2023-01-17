@@ -26,7 +26,7 @@ def initiate_conn():
         print('\n')
 
     else:
-        print('Using standard color map... \n')
+        print('Please include config file in the same location as the .exe... \n')
 
     # Initiate Connection to the db
     conn = pyodbc.connect('Driver={SQL Server};'
