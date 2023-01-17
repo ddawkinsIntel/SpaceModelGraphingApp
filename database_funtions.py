@@ -5,15 +5,34 @@ import pandas as pd
 pd.options.mode.chained_assignment = None  # default='warn'
 import warnings
 warnings.filterwarnings("ignore")
+import os
 
 # Initiates DB connection - returns a "conn"
 def initiate_conn():
 
+    # config_file location for the graph
+    config_file = 'ConfigFile.xlsx'
+
+    # Create the 'graphs' folder, if it does not exist
+    if os.path.exists(config_file):
+
+        config_df = pd.read_excel(config_file, index_col=[0])
+        # Convert config_df into a dictionary
+        config_dict = config_df.to_dict()
+        config_dict = config_dict['Value']
+
+        print('Using config file....')
+        print('Config File: ', config_dict)
+        print('\n')
+
+    else:
+        print('Using standard color map... \n')
+
     # Initiate Connection to the db
     conn = pyodbc.connect('Driver={SQL Server};'
-                          'Server=sql2557-fm1s-in.amr.corp.intel.com, 3181;'
-                          'Database=SpaceModel_PROD;'
-                          'UID=AMR\ddawkins;'
+                          'Server=' + config_dict['Server'] + ';'
+                          'Database=' + config_dict['Database'] + ';'
+                          'UID=' + config_dict['UID'] + ';'
                           'Trusted_Connection=yes;'
                           )
     return conn
