@@ -20,6 +20,9 @@ WARNING:
     - DO NOT alter the Server & Database values, unless Uma or ZZ say the Server or Database values have changed
     - Save and close this file after making changes
 4. Then double clike the .exe file and a window with a black screen will appear then a window with the title "Space Model Graphing App" will pop up
+
+![image](https://user-images.githubusercontent.com/89600331/151611080-8144a6eb-2d65-4c72-b9cb-ca1779a1d937.png)
+
 5. Enter a valid "Version ID" and "WIF ID" from the "Space Model" application
     -  If "WIF ID" is left blank it will default to 0
 6. Click the "Submit" or press "enter" to run the script
